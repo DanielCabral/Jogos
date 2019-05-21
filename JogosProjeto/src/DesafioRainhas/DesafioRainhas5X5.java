@@ -1,0 +1,355 @@
+package DesafioRainhas;
+
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+public class DesafioRainhas5X5 extends JFrame {
+    final int tam=5;
+    final float tamr=0.625f;
+    private JLabel[][] quadrados = new JLabel[tam][tam];
+    private JLabel[] rainhas = new JLabel[tam];
+    private JPanel panel = new JPanel();
+    private JPanel panelrainhas = new JPanel();
+    private JPanel panelrelogio = new JPanel();
+    private JLabel relogio = new JLabel();
+    private JLabel tempo = new JLabel("00:00");
+    private JButton sair = new JButton("Sair");
+    Timer timertempo;
+    ActionListener action;
+    int seg = 0, min = 0, mouserainha;
+
+    public DesafioRainhas5X5() {
+        Inicializar();
+        setTitle("Desafio 4 Rainhas");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setSize((int) (795*tamr), (int) (460*tamr));
+        setSize(795-(395-(int) (395*tamr)), 460-(395-((int) (395*tamr))));
+        setLocationRelativeTo(null);
+        setVisible(true);
+        setLayout(null);
+        sair.setBounds(625-(395-(int) (395*tamr)), 185, 90, 30);
+        sair.setFont(new Font("Arial Narrow", Font.BOLD, 20));
+        sair.setBackground(Color.white);
+        sair.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        add(sair);
+        sair.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                timertempo.stop();
+                timertempo = null;
+
+                dispose();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                sair.setForeground(Color.red);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                sair.setForeground(Color.black);
+            }
+        });
+        panel.setVisible(true);
+        panel.setBackground(Color.white);
+        add(panel);
+        panel.setBounds(85, 15, (int) (500*tamr), (int) (395*tamr));
+        panel.setBorder(BorderFactory.createLineBorder(new Color(15, 35, 75), 5));
+        panelrainhas.setVisible(true);
+        panelrainhas.setBackground(Color.white);
+        add(panelrainhas);
+        panelrainhas.setBounds(5, 15, 62, (int) (395*tamr));
+        panelrainhas.setBorder(BorderFactory.createLineBorder(new Color(15, 35, 75), 2));
+        tempo.setBounds(35, -11, 100, 100);
+        tempo.setFont(new java.awt.Font("LCDMono2", 1, 32));
+        tempo.setBorder(new javax.swing.border.MatteBorder(null));
+        panelrelogio.add(tempo);
+        relogio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Res/clock.png")));
+        relogio.setBounds(5, -50, 180, 180);
+        panelrelogio.add(relogio);
+        panelrelogio.setVisible(true);
+        panelrelogio.setBackground(Color.white);
+        add(panelrelogio);
+        panelrelogio.setBounds(600-(395-(int) (395*tamr)), 90, 145, 80);
+        panelrelogio.setBorder(BorderFactory.createLineBorder(new Color(15, 35, 75), 3));
+        panelrelogio.setLayout(null);
+        action = new ActionListener() {
+            public void actionPerformed(@SuppressWarnings("unused") java.awt.event.ActionEvent e) {
+                seg++;
+                if (seg < 10) {
+                    tempo.setText(tempo.getText().substring(0, 4) + seg);
+                } else {
+                    tempo.setText(tempo.getText().substring(0, 3) + seg);
+                }
+                if (seg == 60) {
+                    tempo.setText(tempo.getText().substring(0, 3) + "00");
+                    seg = 0;
+                    min++;
+                }
+                if (min < 10) {
+                    tempo.setText("0" + min + tempo.getText().substring(2, 5));
+                } else if (min == 15) {
+                } else {
+                    tempo.setText(min + tempo.getText().substring(2, 5));
+                }
+
+            }
+        };
+        timertempo = new Timer(1000, action);
+        timertempo.start();
+
+    }
+   
+    private void Inicializar() {
+        panelrainhas.setLayout(new GridLayout(tam, 1));
+        for (int i = 0; i < tam; i++) {
+            rainhas[i] = new JLabel("", JLabel.CENTER);
+            rainhas[i].setBackground(Color.white);
+            rainhas[i].setIcon(new ImageIcon(getClass().getResource("/Res/rainha.gif")));
+            rainhas[i].setOpaque(true);
+            rainhas[i].setBorder(BorderFactory.createLineBorder(new Color(15, 35, 75), 1));
+            panelrainhas.add(rainhas[i]);
+            final int u = i;
+            rainhas[i].addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (rainhas[u].getIcon() != null && "Cursor Padrão".equals(getCursor().getName())) {
+                        setCursor(setarCursor());
+                        rainhas[u].setIcon(null);
+                        mouserainha = 1;
+                    } else if (rainhas[u].getIcon() == null && !"Cursor Padrão".equals(getCursor().getName())) {
+                        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                        rainhas[u].setIcon(new ImageIcon(getClass().getResource("/Res/rainha.gif")));
+                        mouserainha = 0;
+                    }
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    if (mouserainha == 1) {
+                       setCursor(setarCursor());
+                    }
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                   setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+            });
+        }
+        panel.setLayout(new GridLayout(tam, tam));
+        float k = 1;
+        for (int i = 0; i < tam; i++) {
+            for (int j = 0; j < tam; j++) {
+                quadrados[i][j] = new JLabel("", JLabel.CENTER);
+                if (k / tam == 1.0) {
+                    k = 1;
+                } else if (i == 0 && j == 0) {
+                } else {
+                    k++;
+                }
+                if (i == 0 && j == 0) {
+                    quadrados[i][j].setBackground(Color.black);
+                } else if (k == 1) {
+                    if (j == 0) {
+                        if (quadrados[i - 1][tam-1].getBackground() == Color.white) {
+                            quadrados[i][j].setBackground(Color.white);
+                        } else {
+                            quadrados[i][j].setBackground(Color.black);
+                        }
+                    } else if (quadrados[i][j - 1].getBackground() == Color.white) {
+                        quadrados[i][j].setBackground(Color.white);
+                    } else {
+                        quadrados[i][j].setBackground(Color.black);
+                    }
+                } else if (j == 0) {
+
+                    if (quadrados[i - 1][tam-1].getBackground() == Color.white) {
+                        quadrados[i][j].setBackground(Color.black);
+                    } else {
+                        quadrados[i][j].setBackground(Color.white);
+                    }
+                } else if (quadrados[i][j - 1].getBackground() == Color.white) {
+                    quadrados[i][j].setBackground(Color.black);
+                } else {
+                    quadrados[i][j].setBackground(Color.white);
+                }
+                quadrados[i][j].setOpaque(true);
+                quadrados[i][j].setBorder(BorderFactory.createLineBorder(new Color(15, 35, 75), 2));
+                ;
+                panel.add(quadrados[i][j]);
+                final int u = i;
+                final int c = j;
+                quadrados[i][j].addMouseListener(new MouseListener() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        System.out.println(quadrados[u][c].getIcon()+" "+getCursor().getName());
+                        if (quadrados[u][c].getIcon() != null && "Cursor Padrão".equals(getCursor().getName())) {
+                            setCursor(setarCursor());
+                            quadrados[u][c].setIcon(null);
+                            mouserainha = 1;
+                        } else if (quadrados[u][c].getIcon() == null && !"Cursor Padrão".equals(getCursor().getName())) {
+                            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                            quadrados[u][c].setIcon(new ImageIcon(getClass().getResource("/Res/rainha.gif")));
+                            mouserainha = 0;
+                        }
+                        TesteVitoria();
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        if (mouserainha == 1) {
+                             setCursor(setarCursor());
+                        }
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                            setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    }
+                });
+            }
+        }
+    }
+
+    private void TesteVitoria() {
+        int numerodeRainhas = 0;
+        for (int i = 0; i < tam; i++) {
+            for (int j = 0; j < tam; j++) {
+                if (quadrados[i][j].getIcon() != null) {
+                    numerodeRainhas++;
+                }
+            }
+        }
+
+        if (numerodeRainhas == 8) {
+            boolean vitoria = true;
+            for (int i = 0; i < tam; i++) {
+                for (int j = 0; j < tam; j++) {
+                    if (quadrados[i][j].getIcon() != null) {
+                        if (diagonalPricipal(i, j) == 1 && diagonalSecundaria(i, j) == 1 && esquerdaPraDireita(i) == 1 && direiraPraEsquerda(j) == 1) {
+                        } else {
+                            vitoria = false;
+                        }
+                    }
+                }
+            }
+            if (vitoria) {
+                JOptionPane.showMessageDialog(null, "Parabens, voce venceu!");
+            } else {
+            }
+        } else {
+        }
+
+    }
+
+    private int diagonalPricipal(int i, int j) {
+        int u = i, c = j;
+        while (u != 0 && c != 0) {
+            u--;
+            c--;
+        }
+        int cont = 0;
+        while (c != tam && u != tam) {
+            if (quadrados[u][c].getIcon() != null) {
+                cont++;
+            }
+            c++;
+            u++;
+        }
+        return cont;
+    }
+
+    private int diagonalSecundaria(int i, int j) {
+        int u = i, c = j;
+        while (u != 0 && c != tam-1) {
+            u--;
+            c++;
+        }
+        int cont = 0;
+        while (c != -1 && u != tam) {
+            if (quadrados[u][c].getIcon() != null) {
+                cont++;
+            }
+            c--;
+            u++;
+        }
+        return cont;
+    }
+
+    private int esquerdaPraDireita(int i) {
+        int u = i, c = 0;
+        int cont = 0;
+        while (c != tam) {
+            if (quadrados[u][c].getIcon() != null) {
+                cont++;
+            }
+            c++;
+        }
+        return cont;
+    }
+
+    private int direiraPraEsquerda(int j) {
+        int u = 0, c = j;
+        int cont = 0;
+        while (u != tam) {
+            if (quadrados[u][c].getIcon() != null) {
+                cont++;
+            }
+            u++;
+        }
+        return cont;
+    }
+    public Cursor setarCursor(){
+        Toolkit toolKit = Toolkit.getDefaultToolkit();
+        ImageIcon icon = new ImageIcon(getClass().getResource("/Res/rainha.gif"));
+        Image img = icon.getImage();
+        Point hotSpot = new Point(0, 10);
+        Cursor SQl = toolKit.createCustomCursor(img, hotSpot, "Loading");
+        return SQl;
+    }
+    public static void main(String[] args) {
+        new DesafioRainhas5X5();
+    }
+}
